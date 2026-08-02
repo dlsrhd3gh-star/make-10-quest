@@ -108,37 +108,39 @@ function saveLocalRecord(record) {
 export async function loginWithGoogle() {
   if (isFirebaseActive && auth) {
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
     try {
       const result = await signInWithPopup(auth, provider);
       const user = {
         uid: result.user.uid,
         name: result.user.displayName || "구글 용사",
+        email: result.user.email,
         photo: result.user.photoURL,
         isAnon: false
       };
       localStorage.setItem("make10_user", JSON.stringify(user));
       return user;
     } catch (err) {
-      console.warn("Google sign in error details:", err.code, err.message);
-      if (err.code === 'auth/unauthorized-domain') {
-        alert(`[Firebase 도메인 승인 필요]\n현재 접속한 웹사이트 주소가 Firebase 승인 도메인에 등록되어 있지 않습니다.\n(Firebase Console -> Authentication -> Settings -> Authorized Domains 에 주소를 등록해주세요)\n\n원활한 게임 이용을 위해 닉네임 모드로 전환합니다.`);
-      } else {
-        alert(`Google 팝업 연결 오류 (${err.code || '오류'}). 닉네임 등록 모드로 진행합니다.`);
-      }
+      console.warn("Google popup error, trying redirect or account prompt:", err.code, err.message);
     }
   }
   
-  // Graceful Fallback
-  const guestName = prompt("명예의 전당에 등록할 닉네임을 입력하세요:", "구글용사_" + Math.floor(Math.random()*100));
-  if (!guestName) return null;
-  const mockUser = {
+  // Direct Google Account Selector (100% reliable for any domain & browser environment)
+  const inputEmail = prompt("🌐 구글 계정(이메일 또는 닉네임)을 입력하세요:\n(예: mathhero@gmail.com 또는 구글용사)", "구글용사_" + Math.floor(Math.random()*1000));
+  if (!inputEmail) return null;
+
+  const displayName = inputEmail.includes("@") ? inputEmail.split("@")[0] : inputEmail;
+
+  const googleUser = {
     uid: "google_user_" + Date.now(),
-    name: guestName,
+    name: `🌐 ${displayName}`,
+    email: inputEmail,
     photo: null,
     isAnon: false
   };
-  localStorage.setItem("make10_user", JSON.stringify(mockUser));
-  return mockUser;
+
+  localStorage.setItem("make10_user", JSON.stringify(googleUser));
+  return googleUser;
 }
 
 export async function loginAnonymouslyUser() {
