@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>숫자 마법학교: 10의 비밀 원정대 (Make 10 Quest)</title>
+  <link rel="stylesheet" href="./src/style.css" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header>
+      <div class="brand">
+        <div class="brand-icon">🧙‍♂️</div>
+        <div class="brand-title">
+          <h1>숫자 마법학교: 10의 비밀</h1>
+          <p>10을 만드는 3가지 연습 미니게임 & 보스 던전</p>
+        </div>
+      </div>
+      <div class="user-stats">
+        <div class="stat-badge gold" title="보유 골드">
+          🪙 <span id="user-gold">0</span> Gold
+        </div>
+        <div class="stat-badge clears" title="미니게임 클리어 횟수">
+          🎯 <span id="user-clears">0</span> 클리어
+        </div>
+        <button id="auth-btn" class="auth-btn">
+          🔑 <span id="auth-btn-text">로그인</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="tab-btn active" data-tab="games">🎮 미니게임 목록</button>
+      <button class="tab-btn" data-tab="boss">👹 보스 던전</button>
+      <button class="tab-btn" data-tab="hall">🏆 명예의 전당</button>
+    </nav>
+
+    <!-- VIEW 1: Mini Games & Boss Banner -->
+    <section id="view-games" class="view-panel active">
+      <div class="games-grid">
+        <!-- Game 1 -->
+        <div class="game-card">
+          <div class="game-icon">🫧</div>
+          <div class="game-title">1. 물방울 짝꿍 터뜨리기</div>
+          <div class="game-desc">
+            주어진 숫자와 합쳐서 <strong>10</strong>이 되는 짝꿍 숫자의 물방울을 25초 동안 빠르게 터뜨리세요!
+          </div>
+          <button class="play-btn" data-game="1">게임 시작 (25초)</button>
+        </div>
+
+        <!-- Game 2 -->
+        <div class="game-card">
+          <div class="game-icon">🧱</div>
+          <div class="game-title">2. 10-Frame 상자 채우기</div>
+          <div class="game-desc">
+            10칸 상자에 비어있는 칸의 개수를 시각적으로 파악하고, 상자를 완성할 짝꿍 보수를 고르세요!
+          </div>
+          <button class="play-btn" data-game="2">게임 시작 (25초)</button>
+        </div>
+
+        <!-- Game 3 -->
+        <div class="game-card">
+          <div class="game-icon">🔮</div>
+          <div class="game-title">3. 10 구슬 짝맞추기</div>
+          <div class="game-desc">
+            움직이는 숫자가 적힌 구슬 중 합이 <strong>10</strong>이 되는 2개의 구슬을 조합해 터뜨리세요!
+          </div>
+          <button class="play-btn" data-game="3">게임 시작 (25초)</button>
+        </div>
+      </div>
+
+      <!-- Boss Banner -->
+      <div class="boss-banner">
+        <div class="boss-info">
+          <h2>👹 10의 대마왕 보스 던전</h2>
+          <p>모은 골드로 보스에 도전하세요! 10 만들기 문제 10개를 푼 시간과 정답 수로 명예의 전당에 등재됩니다.</p>
+        </div>
+        <button id="boss-entry-btn" class="boss-challenge-btn">
+          ⚔️ 도전하기 (50 Gold)
+        </button>
+      </div>
+    </section>
+
+    <!-- VIEW 2: Active Gameplay Screen -->
+    <section id="view-play" class="view-panel">
+      <div class="game-play-area">
+        <div class="game-header">
+          <h2 id="game-active-title">게임 제목</h2>
+          <div style="display: flex; gap: 12px;">
+            <div class="timer-box">⏳ <span id="game-timer">25</span>s</div>
+            <div class="score-box">⭐ <span id="game-score">0</span>점</div>
+          </div>
+        </div>
+        <div id="game-stage" style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 320px;">
+          <!-- Dynamically populated by app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: Hall of Fame (명예의 전당) -->
+    <section id="view-hall" class="view-panel">
+      <div class="hall-container">
+        <h2 style="font-size: 1.6rem; font-weight: 900; margin-bottom: 16px;">🏆 명예의 전당 (Top 10)</h2>
+        
+        <div class="sub-tabs">
+          <button class="sub-tab-btn active" data-subtab="boss">👹 보스전 랭킹</button>
+          <button class="sub-tab-btn" data-subtab="gold">🪙 골드 부자 Top 10</button>
+          <button class="sub-tab-btn" data-subtab="clears">🎯 미니게임 마스터 Top 10</button>
+        </div>
+
+        <div id="hall-content">
+          <!-- Dynamically generated leaderboard table -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-title">🔑 마법학교 로그인</div>
+        <div class="modal-body">
+          명예의 전당에 본인의 성적을 기록하려면 Firebase/Google 로그인 또는 익명 닉네임 로그인을 선택해 주세요!
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <button id="google-login-btn" class="play-btn" style="background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);">
+            🌐 Google 계정으로 로그인
+          </button>
+          <button id="anon-login-btn" class="play-btn" style="background: linear-gradient(135deg, #64748b 0%, #475569 100%);">
+            👤 익명 탐험가로 시작하기
+          </button>
+          <button id="close-modal-btn" style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 8px;">
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>
