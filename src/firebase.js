@@ -110,23 +110,29 @@ export async function loginWithGoogle() {
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
-      return {
+      const user = {
         uid: result.user.uid,
         name: result.user.displayName || "구글 용사",
         photo: result.user.photoURL,
         isAnon: false
       };
+      localStorage.setItem("make10_user", JSON.stringify(user));
+      return user;
     } catch (err) {
-      console.error("Google sign in error:", err);
-      alert("Google 로그인 실패: " + err.message);
+      console.warn("Google sign in error details:", err.code, err.message);
+      if (err.code === 'auth/unauthorized-domain') {
+        alert(`[Firebase 도메인 승인 필요]\n현재 접속한 웹사이트 주소가 Firebase 승인 도메인에 등록되어 있지 않습니다.\n(Firebase Console -> Authentication -> Settings -> Authorized Domains 에 주소를 등록해주세요)\n\n원활한 게임 이용을 위해 닉네임 모드로 전환합니다.`);
+      } else {
+        alert(`Google 팝업 연결 오류 (${err.code || '오류'}). 닉네임 등록 모드로 진행합니다.`);
+      }
     }
   }
   
-  // Local fallback
-  const guestName = prompt("구글 로그인 시뮬레이션! 명예의 전당에 등록할 닉네임을 입력하세요:", "구글용사_" + Math.floor(Math.random()*100));
+  // Graceful Fallback
+  const guestName = prompt("명예의 전당에 등록할 닉네임을 입력하세요:", "구글용사_" + Math.floor(Math.random()*100));
   if (!guestName) return null;
   const mockUser = {
-    uid: "google_mock_" + Date.now(),
+    uid: "google_user_" + Date.now(),
     name: guestName,
     photo: null,
     isAnon: false
@@ -139,14 +145,16 @@ export async function loginAnonymouslyUser() {
   if (isFirebaseActive && auth) {
     try {
       const result = await signInAnonymously(auth);
-      return {
+      const user = {
         uid: result.user.uid,
         name: "익명 탐험가#" + result.user.uid.substring(0, 4),
         photo: null,
         isAnon: true
       };
+      localStorage.setItem("make10_user", JSON.stringify(user));
+      return user;
     } catch (err) {
-      console.error("Anonymous sign in error:", err);
+      console.warn("Anonymous sign in error:", err);
     }
   }
 
