@@ -140,7 +140,7 @@ document.querySelectorAll(".play-btn[data-game]").forEach(btn => {
 elBossEntryBtn.addEventListener("click", () => {
   if (userGold < 50) return;
   sounds.playClick();
-  if (confirm("50 Gold를 사용하여 10의 대마왕 보스전에 도전하시겠습니까?")) {
+  if (confirm("50 Gold를 사용하여 10의 화염 드래곤전에 도전하시겠습니까?")) {
     userGold -= 50;
     updateHeaderUI();
     startBossBattle();
@@ -479,7 +479,7 @@ function finishMiniGame(title, score) {
 }
 
 // ----------------------------------------------------
-// BOSS BATTLE: 👹 10의 대마왕 (10 Questions Challenge)
+// DRAGON BATTLE: 🐉 10의 화염 드래곤 (10 Questions Challenge)
 // ----------------------------------------------------
 function startBossBattle() {
   document.querySelectorAll(".view-panel").forEach(v => v.classList.remove("active"));
@@ -487,7 +487,7 @@ function startBossBattle() {
 
   if (activeTimer) clearInterval(activeTimer);
 
-  elGameActiveTitle.textContent = "👹 10의 대마왕 보스전";
+  elGameActiveTitle.textContent = "🐉 10의 화염 드래곤 던전";
   let currentQuestionIdx = 0;
   let correctAnswers = 0;
   const totalQuestions = 10;
@@ -544,9 +544,9 @@ function startBossBattle() {
 
     elGameStage.innerHTML = `
       <div class="boss-quiz-box">
-        <div class="boss-avatar">👹</div>
+        <div class="boss-avatar">🐉</div>
         <div style="font-size: 1.1rem; color: var(--text-muted);">
-          보스의 질문 [ ${currentQuestionIdx + 1} / ${totalQuestions} ]
+          드래곤의 질문 [ ${currentQuestionIdx + 1} / ${totalQuestions} ]
         </div>
         <div class="boss-question">${q.text}</div>
         <div class="number-choices" id="boss-choices"></div>
@@ -602,7 +602,7 @@ async function finishBossBattle(score, timeSec) {
     <div style="text-align: center; padding: 24px; max-width: 500px;">
       <div style="font-size: 3.5rem; margin-bottom: 12px;">🏆</div>
       <h2 style="font-size: 2rem; font-weight: 900; color: #f43f5e; margin-bottom: 8px;">
-        보스전 도전 완료!
+        드래곤전 도전 완료!
       </h2>
       <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 20px;">
         명예의 전당에 당신의 위대한 기록이 등록되었습니다!
@@ -678,8 +678,8 @@ async function renderHallOfFame(type = "boss") {
         <tr>
           <th>순위</th>
           <th>용사 닉네임</th>
-          <th>보스 맞춘 문제수</th>
-          <th>보스 클리어 시간</th>
+          <th>드래곤 맞춘 문제수</th>
+          <th>드래곤 클리어 시간</th>
           <th>모은 골드</th>
           <th>미니게임 클리어</th>
         </tr>
